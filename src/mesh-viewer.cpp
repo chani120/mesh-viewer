@@ -26,9 +26,9 @@ public:
         for (string var : files_vec) {
             PLYMesh file_var;
             file_var.load("../models/" + var);
-            meshList.push_back(file_var);
+            mesh_var.push_back(file_var);
         }
-        mesh = meshList[0];
+        mesh = mesh_var[0];
     }
 
     void mouseMotion(int x, int y, int dx, int dy) {
@@ -57,21 +57,21 @@ public:
 
     void keyUp(int key, int mods) {
         if (key == GLFW_KEY_P) {
-            models = (models + 1) % meshList.size();
+            models = (models + 1) % mesh_var.size();
         }
         else if (key == GLFW_KEY_P) {
             if (models != 0) {
                 models = models - 1;
             }
             else {
-                models = meshList.size() - 1;
+                models = mesh_var.size() - 1;
             }
         }
     }
 
     void draw() {
         std::cout << files_vec[models] << std::endl;
-        mesh = meshList[models];
+        mesh = mesh_var[models];
         float aspect = ((float)width()) / height();
         renderer.perspective(glm::radians(60.0f), aspect, 0.1f, 50.0f);
         renderer.lookAt(eyePos, lookPos, up);
@@ -107,7 +107,7 @@ public:
 protected:
     std::vector<string> files_vec = GetFilenamesInDir("../models", "ply");
     PLYMesh mesh;
-    std::vector<PLYMesh> meshList;
+    std::vector<PLYMesh> mesh_var;
     vec3 eyePos = vec3(10, 0, 0);
     vec3 lookPos = vec3(0, 0, 0);
     vec3 up = vec3(0, 1, 0);
