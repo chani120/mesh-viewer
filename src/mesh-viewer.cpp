@@ -23,8 +23,9 @@ public:
 
     void setup() {
         renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
-        renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
         renderer.loadShader("phong-pixel", "../shaders/phong-pixel.vs", "../shaders/phong-pixel.fs");
+        renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
+        
         files_vec = GetFilenamesInDir("../models", "ply");
         for (string var : files_vec) {
             PLYMesh file_var;
@@ -35,10 +36,12 @@ public:
     }
 
     void mouseMotion(int x, int y, int dx, int dy) {
-        if (selected) {       
-            float x = rad * sin(azimuth_var - dx * 0.1) * cos(element_var + dy * 0.1);
-            float y = rad * sin(element_var + dy * 0.1);
-            float z = rad * cos(azimuth_var - dx * 0.1) * cos(element_var + dy * 0.1);
+        if (selected) {      
+            azimuth_var = azimuth_var - dx * 0.02;
+            elevation_var = elevation_var + dy * 0.02;
+            float x = rad * sin(azimuth_var) * cos(elevation_var);
+            float y = rad * sin(elevation_var);
+            float z = rad * cos(azimuth_var) * cos(elevation_var);
             eyePos = vec3(x, y, z);
         }
     }
@@ -52,9 +55,10 @@ public:
     }
 
     void scroll(float dx, float dy) {
-        float x = (rad + dy) * sin(azimuth_var) * cos(element_var);
-        float y = (rad + dy) * sin(element_var);
-        float z = (rad + dy) * cos(azimuth_var) * cos(element_var);
+        rad = rad + dy * 0.5;
+        float x = (rad * sin(azimuth_var) * cos(elevation_var));
+        float y = (rad * sin(elevation_var));
+        float z = (rad * cos(azimuth_var) * cos(elevation_var));
         eyePos = vec3(x, y, z);
     }
 
@@ -71,7 +75,7 @@ public:
             }
         }
         if (key == GLFW_KEY_S) {
-            shader_var = (shader_var + 1) % shaders.size();
+            shader_var = (shader_var + 1) % shaders.size();          
         }
     }
 
@@ -120,8 +124,8 @@ protected:
     vec3 eyePos = vec3(10, 0, 0);
     vec3 lookPos = vec3(0, 0, 0);
     vec3 up = vec3(0, 1, 0);
-    std::vector<string> shaders = { "normals", "phong-vertex", "phong-pixel"};
-    float element_var = 0;
+    std::vector<string> shaders = { "normals", "phong-pixel","phong-vertex"};
+    float elevation_var = 0;
     float azimuth_var = 0;
     float rad = 10;
     int model_var = 0;
