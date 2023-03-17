@@ -22,6 +22,9 @@ public:
     }
 
     void setup() {
+        renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
+        renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
+        renderer.loadShader("phong-pixel", "../shaders/phong-pixel.vs", "../shaders/phong-pixel.fs");
         files_vec = GetFilenamesInDir("../models", "ply");
         for (string var : files_vec) {
             PLYMesh file_var;
@@ -56,22 +59,27 @@ public:
     }
 
     void keyUp(int key, int mods) {
+        if (key == GLFW_KEY_N) {
+            model_var = (model_var + 1) % mesh_var.size();
+           }
         if (key == GLFW_KEY_P) {
-            models = (models + 1) % mesh_var.size();
-        }
-        else if (key == GLFW_KEY_P) {
-            if (models != 0) {
-                models = models - 1;
+            if (model_var != 0) {
+                model_var = model_var - 1;
             }
             else {
-                models = mesh_var.size() - 1;
+                model_var = mesh_var.size() - 1;
             }
+        }
+        if (key == GLFW_KEY_S) {
+            shader_var = (shader_var + 1) % shaders.size();
         }
     }
 
     void draw() {
-        std::cout << files_vec[models] << std::endl;
-        mesh = mesh_var[models];
+        renderer.beginShader(shaders[shader_var]); // activates shader with given name
+        // all primitives draw here will use the current shader
+        std::cout << files_vec[model_var] << std::endl;
+        mesh = mesh_var[model_var];
         float aspect = ((float)width()) / height();
         renderer.perspective(glm::radians(60.0f), aspect, 0.1f, 50.0f);
         renderer.lookAt(eyePos, lookPos, up);
@@ -101,6 +109,7 @@ public:
         renderer.translate(vec3(0, 0, 0));
         renderer.lookAt(eyePos, lookPos, up);
         renderer.mesh(mesh);
+        renderer.endShader();
        
     }
 
@@ -111,10 +120,12 @@ protected:
     vec3 eyePos = vec3(10, 0, 0);
     vec3 lookPos = vec3(0, 0, 0);
     vec3 up = vec3(0, 1, 0);
+    std::vector<string> shaders = { "normals", "phong-vertex", "phong-pixel"};
     float element_var = 0;
     float azimuth_var = 0;
     float rad = 10;
-    int models = 0;
+    int model_var = 0;
+    int shader_var = 0;
     bool selected = false;
 };
 
