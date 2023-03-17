@@ -33,6 +33,7 @@ namespace agl {
       // Return number of vertices in this model
       int numVertices() const;
 
+
       // Positions in this model
       const std::vector<GLfloat>& positions() const;
 
@@ -47,6 +48,7 @@ namespace agl {
 
    protected:
       void init();
+      void clear();
 
    protected:
 

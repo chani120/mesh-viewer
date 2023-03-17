@@ -1,13 +1,5 @@
-//--------------------------------------------------
-// Author:
-// Date:
-// Description: Loads PLY files in ASCII format
-//--------------------------------------------------
-
 #include "plymesh.h"
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
+#include "fstream"
 #include <sstream>
 
 using namespace std;
@@ -30,113 +22,124 @@ namespace agl {
     PLYMesh::~PLYMesh() {
     }
 
-   bool PLYMesh::load(const std::string& filename) {
-      if ( _positions.size() != 0 ) {
-         std::cout << "WARNING: Cannot load different files with the same PLY mesh\n";
-         return false;
-      }
-      
-         ifstream file_var;
-         file_var.open(filename);
-         if (!file_var.is_open()) {
+    bool PLYMesh::load(const std::string& filename) {
+
+        if (_positions.size() != 0) {
+            std::cout << "WARNING: Cannot load different files with the same PLY mesh\n";
             return false;
-        }
-        string data_var;
-        file_var >> data_var;
-        if (data_var.compare("ply") != 0) {
-            return false;
-        }
-        while (data_var.compare("vertex") != 0) {
-            file_var >> data_var;
-        }
-        file_var >> data_var;
-        int numVertex = stoi(data_var);
-        while (data_var.compare("face") != 0) {
-            file_var >> data_var;
-        }
-        file_var >> data_var;
-         int numFace = stoi(data_var);
-        printf("numface: %d\n", numFace);
-        while (data_var.compare("end_header") != 0) {
-            file_var >> data_var;
         }
 
-        for (int i = 0; i < numVertex; i++) {
-            GLfloat var1, var2, var3, var4, var5, var6;
-            file_var >> var1 >> var2 >> var3 >> var4 >> var5 >> var6;
-            vec3 vec_var = vec3{ var1, var2, var3 };
-            _positions.push_back(var1);
-            _positions.push_back(var2);
-            _positions.push_back(var3);
-            _normals.push_back(var4);
-            _normals.push_back(var5);
-            _normals.push_back(var6);
-            file_var >> data_var;
-            file_var >> data_var;
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            return false;
         }
-        for (int i = 0; i < numFace; i++) {
-            file_var >> data_var;
-            GLuint f1, f2, f3;
-            file_var >> f1 >> f2>> f3;
-            _faces.push_back(f1);
-            _faces.push_back(f2);
-            _faces.push_back(f3);
-        }  
+
+        std::string line;
+        if (!std::getline(file, line) || line != "ply") {
+            return false;
+        }
+
+        int numVertices = 0;
+        int faces_var = 0; 
+        while (std::getline(file, line) && line != "end_header") {
+            std::istringstream iss(line);
+            std::string keyword;
+            iss >> keyword;
+
+            if (keyword == "element") {
+                std::string elementType;
+                int count;
+                iss >> elementType >> count;
+
+                if (elementType == "vertex") {
+                    numVertices = count;
+                }
+                else if (elementType == "face") {
+                    faces_var = count;
+                }
+            }
+        }
+
+        for (int i = 0; i < numVertices; i++) {
+            std::getline(file, line);
+            std::istringstream iss(line);
+            float x_var, y_var, z_var, x_normal, y_normal, z_normal;
+            iss >> x_var >> y_var >> z_var >> x_normal >> y_normal >> z_normal;
+            _positions.push_back(x_var);
+            _positions.push_back(y_var);
+            _positions.push_back(z_var);
+            _normals.push_back(x_normal);
+            _normals.push_back(y_normal);
+            _normals.push_back(z_normal);
+        }
+
+        for (int i = 0; i < faces_var; i++) {
+            int count, v1, v2, v3;
+            file >> count >> v1 >> v2 >> v3;
+            _faces.push_back(v1);
+            _faces.push_back(v2);
+            _faces.push_back(v3);
+            for (int j = 0; j < count - 3; j++) {
+                int vi;
+                file >> vi;
+                _faces.push_back(v1 - 1);   
+                _faces.push_back(vi - 1);
+                _faces.push_back(vi - 1);
+            }
+        }
+
+        if (numVertices == 0 || faces_var == 0) {
+            return false;
+        }
+
         return true;
-   }
-   glm::vec3 PLYMesh::minBounds() const {
-   glm::vec3 minBound(_positions[0], _positions[1], _positions[2]);
-     
-     for (int i = 3; i < _positions.size(); i += 3) {
-         glm::vec3 vertex(_positions[i], _positions[i+1], _positions[i+2]);
-         if (vertex.x < minBound.x) {
-            minBound.x = vertex.x;
-         }
-         if (vertex.y < minBound.y) {
-         minBound.y = vertex.y;
-         }
-         if (vertex.z < minBound.z) {
-         minBound.z = vertex.z;
-      }
-   }
-
-   return minBound;
-   }
-
-   glm::vec3 PLYMesh::maxBounds() const {
-     
-     glm::vec3 maxBound(_positions[0], _positions[1], _positions[2]);
-
-      for (int i = 3; i < _positions.size(); i += 3) {
-         glm::vec3 vertex(_positions[i], _positions[i+1], _positions[i+2]);
-         if (vertex.x > maxBound.x) {
-            maxBound.x = vertex.x;
-         }
-         if (vertex.y > maxBound.y) {
-         maxBound.y = vertex.y;
-         }
-         if (vertex.z > maxBound.z) {
-         maxBound.z = vertex.z;
-      }
-   }
-
-   return maxBound;
-   }
-
-    int PLYMesh::numVertices() const {
-        return _positions.size()/3;
     }
 
-    void PLYMesh::clear() {
-        _positions.clear();
-        _faces.clear();
-        _normals.clear();
-        maxB = vec3( - 100000, -100000, -100000);
-        minB = vec3(100000, 100000, 100000);
+    glm::vec3 PLYMesh::minBounds() const {
+        glm::vec3 minBound(_positions[0], _positions[1], _positions[2]);
+
+        for (int i = 0; i < _positions.size(); i += 3) {
+            glm::vec3 vertex(_positions[i], _positions[i + 1], _positions[i + 2]);
+            if (vertex.x < minBound.x) {
+                minBound.x = vertex.x;
+            }
+            if (vertex.y < minBound.y) {
+                minBound.y = vertex.y;
+            }
+            if (vertex.z < minBound.z) {
+                minBound.z = vertex.z;
+            }
+        }
+
+        return minBound;
+    }
+
+    glm::vec3 PLYMesh::maxBounds() const {
+
+        glm::vec3 maxBound(_positions[0], _positions[1], _positions[2]);
+
+        for (int i = 0; i < _positions.size(); i += 3) {
+            glm::vec3 vertex(_positions[i], _positions[i + 1], _positions[i + 2]);
+            if (vertex.x > maxBound.x) {
+                maxBound.x = vertex.x;
+            }
+            if (vertex.y > maxBound.y) {
+                maxBound.y = vertex.y;
+            }
+            if (vertex.z > maxBound.z) {
+                maxBound.z = vertex.z;
+            }
+        }
+
+        return maxBound;
+    }
+
+    int PLYMesh::numVertices() const {
+        return _positions.size() / 3;
     }
 
     int PLYMesh::numTriangles() const {
-        return _faces.size()/3;
+        return _faces.size() / 3;
     }
 
     const std::vector<GLfloat>& PLYMesh::positions() const {
@@ -150,4 +153,11 @@ namespace agl {
     const std::vector<GLuint>& PLYMesh::indices() const {
         return _faces;
     }
+
+    void PLYMesh::clear() {
+        _positions.clear();
+        _normals.clear();
+        _faces.clear();
+    }
 }
+
