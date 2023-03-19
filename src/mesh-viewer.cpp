@@ -88,6 +88,7 @@ public:
         renderer.perspective(glm::radians(60.0f), aspect, 0.1f, 50.0f);
         renderer.lookAt(eyePos, lookPos, up);
 
+
         float a = 1;
         float b = 1;
         float c = 1;  
