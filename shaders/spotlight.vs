@@ -17,7 +17,7 @@ uniform mat3 NormalMatrix;
 uniform mat4 ModelViewMatrix;
 uniform mat4 MVP;
 uniform bool HasUV;
-uniform light light_var;
+uniform light light_var1;
 
 out vec3 Pos;
 out vec3 Norm;
@@ -26,6 +26,6 @@ out vec3 SpotDir;
 void main() {
   Pos = vec3(ModelViewMatrix * vec4(vPos, 1.0));
   Norm = normalize(NormalMatrix * vNormals);
-  SpotDir = normalize(-(light_var.pos.xyz));
+  SpotDir = normalize(-(vec3(light_var1.pos.xyz)));
   gl_Position = MVP * vec4(vPos, 1.0);
 }

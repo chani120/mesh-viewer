@@ -16,7 +16,7 @@ namespace agl {
 
     void PLYMesh::init() {
         assert(_positions.size() != 0);
-        initBuffers(&_faces, &_positions, &_normals);
+        initBuffers(&_faces, &_positions, &_normals, &_uvCoords);
     }
 
     PLYMesh::~PLYMesh() {
@@ -71,6 +71,10 @@ namespace agl {
             _normals.push_back(x_normal);
             _normals.push_back(y_normal);
             _normals.push_back(z_normal);
+            float uCoords, vCoords;
+            iss >> uCoords >> vCoords;
+            _uvCoords.push_back(uCoords);
+            _uvCoords.push_back(vCoords);
         }
 
         for (int i = 0; i < faces_var; i++) {
