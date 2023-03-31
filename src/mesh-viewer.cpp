@@ -28,7 +28,7 @@ public:
         renderer.loadShader("toon", "../shaders/toon.vs", "../shaders/toon.fs");
         renderer.loadShader("spotlight", "../shaders/spotlight.vs", "../shaders/spotlight.fs");
         renderer.loadShader("texture", "../shaders/texture.vs", "../shaders/texture.fs");
-        renderer.loadTexture("brick", "../textures/bricks.png", 0);
+        renderer.loadTexture("stars", "../textures/stars.jpeg", 0);
 
         files_vec = GetFilenamesInDir("../models", "ply");
         for (string var : files_vec) {
@@ -43,6 +43,10 @@ public:
         if (selected) {      
             azimuth_var = azimuth_var - dx * 0.02;
             elevation_var = elevation_var + dy * 0.02;
+
+
+
+           
             float x = rad * sin(azimuth_var) * cos(elevation_var);
             float y = rad * sin(elevation_var);
             float z = rad * cos(azimuth_var) * cos(elevation_var);
@@ -85,7 +89,7 @@ public:
 
     void draw() {
         renderer.beginShader(shaders[shader_var]);
-        renderer.texture("diffuseTexture", "brick");
+        renderer.texture("diffuseTexture", "stars");
         renderer.setUniform("light_var.pos", eyePos);
         renderer.setUniform("light_var1.pos", vec4(30.0,20.0,-20.0,1.0));
         renderer.setUniform("light_var1.la", vec3(1.0f));
