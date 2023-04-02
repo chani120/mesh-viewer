@@ -2,7 +2,8 @@
 
 Implements a simple PLY viewer
 
-TODO: Add a representative image for your project here
+<img width="180" alt="Screenshot 2023-04-02 180201" src="https://user-images.githubusercontent.com/44120884/229381394-9e8734bb-e51a-4906-bd3c-cd437334a570.png">
+
 
 ## How to build
 
@@ -44,8 +45,20 @@ mesh-viewer/build $ ../bin/mesh-viewer
 
 ## Demo of basic features
 
-TODO: Document the core features of your viewer (shaders + models)
+[screen-capture (1).webm](https://user-images.githubusercontent.com/44120884/229380854-4f9a3d37-0f73-4920-a55e-7717aa2f6aae.webm)
+
+[screen-capture (2).webm](https://user-images.githubusercontent.com/44120884/229380874-addd3e57-ff31-4929-bbed-8bcb50b24f5e.webm)
+
+[screen-capture (3).webm](https://user-images.githubusercontent.com/44120884/229380883-2d8d5d23-53f7-4deb-ab03-a9c78f89f5ba.webm)
+
 
 ## Unique features 
 
-TODO: Show the unique features you made
+[screen-capture (4).webm](https://user-images.githubusercontent.com/44120884/229380900-be02e3ea-8538-4f5e-bee0-7f0ee9e0dd61.webm)
+
+https://user-images.githubusercontent.com/44120884/229381041-66bfcec3-5fbc-49fe-8257-e5a3e8596bae.mp4
+
+[screen-capture (7).webm](https://user-images.githubusercontent.com/44120884/229381089-e3df8415-0e5f-48fe-8c1b-27308d7dda46.webm)
+
+
+
